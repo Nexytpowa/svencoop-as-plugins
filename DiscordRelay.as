@@ -1,16 +1,20 @@
-const int server_id = 1;
+//Discord-Sven bridge
 
-const string g_InputFile = "scripts/plugins/store/discordinput.txt";
-const string g_OutputFile = "scripts/plugins/store/discordoutput.txt";
-//This is where map preview images are stored
-const string g_ImagePathURL = "https://image.gametracker.com/images/maps/160x120/hl/";
-array<string> g_BannedKeywords = { "https://", "http://" }; //Try not to put too many here
+const int server_id = 1;
 
 const string g_ChannelID = (server_id == 1 ? "927048975142490152" : "927049137151680582"); //for server 2
 const string g_ChannelCMD = "say "+g_ChannelID+" ";
 const string g_EmbedCMD = "embed "+g_ChannelID+" ";
 
+const string g_InputFile = "scripts/plugins/store/discordinput.txt";
+const string g_OutputFile = "scripts/plugins/store/discordoutput.txt";
+//This is where map preview images are stored
+const string g_ImagePathURL = "https://image.gametracker.com/images/maps/160x120/hl/";
+array<string> g_BannedKeywords = { "https://", "http://" }; //Fixes users being able to post images on discord
+
 const array<string> g_CountNames = { "st", "nd", "rd", "th" };
+
+const float g_FileIODelay = 0.150f;
 
 bool g_ChangingMap = false;
 int g_OldPlayerCount = 0;
@@ -29,11 +33,12 @@ void PluginInit()
 	g_Hooks.RegisterHook(Hooks::Player::ClientSay, @ClientSay);
 	g_Hooks.RegisterHook(Hooks::Player::ClientPutInServer, @ClientPutInServer);
 	g_Hooks.RegisterHook(Hooks::Player::ClientDisconnect, @ClientDisconnect);
-	
+
+	//Uncomment to enable player death info
 	//g_Hooks.RegisterHook(Hooks::Player::PlayerKilled, @OnPlayerKilled);
 	
-	g_Scheduler.SetInterval("OutputQueue", 0.150f);
-	g_Scheduler.SetInterval("ProcessInput", 0.150f);
+	g_Scheduler.SetInterval("OutputQueue", g_FileIODelay);
+	g_Scheduler.SetInterval("ProcessInput", g_FileIODelay);
 }
 
 void ProcessInput()
@@ -104,8 +109,10 @@ HookReturnCode MapChange()
 
 HookReturnCode ClientPutInServer( CBasePlayer@ pPlayer ) 
 {
-	//If i put this in MapInit it will execute twice when the server uses changelevel instead of map
-	//at least the discord bot will only print map changes when theres a player online
+    //hack:
+	//If i put this in MapInit it will execute twice when the server uses 'changelevel' instead of 'map'
+	//at least the discord bot will only print map changes when theres a player online...
+	//TODO: Make JSON writing less terrible
 	if(g_ChangingMap)
 	{
 		if(g_OldMap != g_Engine.mapname)
