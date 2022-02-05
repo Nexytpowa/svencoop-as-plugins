@@ -1,7 +1,7 @@
 //TODO: Code review and cleaning
 // - Add customizable pitch for each word
 // - Add support for more characters (scientist, vox) if sound cache supports it
-// - Benchmark code, make it less dependant on steamID's
+// - Benchmark code and make it less dependant on steamID's to get player values
 
 const string g_SoundFile = "scripts/plugins/cfg/GruntSounds.txt";
 
@@ -13,23 +13,26 @@ const int g_MinSpeed = 70;
 const int g_MaxSpeed = 100;
 const float g_DefaultSpeed = 0.888f; //Change this to reduce the pause between words for grunts (test carefully with many words)
 
-// Vocal delay = BaseVocalDelay + MulVocalDelay*(Number of players connected)
+// g_MulVocalDelay: Increase delay between sentences for each player connected
 const float g_BaseVocalDelay = 10.0f;
 const float g_MulVocalDelay = 0.5f; 
 
 // Anti-Spam
-const float g_MaxSpeechDuration = 15.0f; // Speech length shall be limited to avoid sentences too long
-const int g_MaxWords = 20;
-const int g_MaxRepeatedWord = 3; // Max times word can be repeated. Will decrement each time this limit is passed in a sentence
+const float g_MaxSpeechDuration = 15.0f; // Speech duration shall be limited to avoid sentences too long
+const int g_MaxWords = 20;  // Max words in a sentence
+const int g_MaxRepeatedWord = 3; // Max times a word can be repeated. Will decrement each time this limit is passed in a sentence
 
 const uint g_MaxListLength = 48; // Max length a line can have in the list before jumping
 
+
+
+
 dictionary g_SoundList;
 dictionary g_SoundDuration;
+dictionary g_PlayerDelays;
 dictionary g_Pitch;
 dictionary g_Volume;
-dictionary g_Speed; // custom GDefaultSpeed for each player
-dictionary g_PlayerDelays;
+dictionary g_Speed;
 
 array<string> @g_SoundListKeys;
 array<string> g_SoundListPrint;
