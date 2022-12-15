@@ -143,10 +143,6 @@ HookReturnCode WeaponSecondaryAttack( CBasePlayer@ pPlayer, CBasePlayerWeapon@ p
 		if(pWeapon.m_iClip != -1)
 			PushGrenade(pPlayer, 500.f, 20.f);
 	}
-	else if(pWeapon.iItemSlot() == 1 && pWeapon.pev.classname == "weapon_crowbar")
-	{
-		PushGrenade(pPlayer, 50.f, 20.f);
-	}
 
 	return HOOK_CONTINUE;
 }
